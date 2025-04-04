@@ -115,6 +115,7 @@ class Pydle:
             or len(self.board) > 0
             and recentWord == self.currentWord
         ):
+            global didDaily
             if not didDaily and not self.isRandom:
                 didDaily = True
             self.printBoard()
@@ -186,6 +187,7 @@ class Pydle:
             )
 
 
+global didDaily
 didDaily = False
 
 

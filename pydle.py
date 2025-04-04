@@ -99,7 +99,7 @@ class Pydle:
             case "daily":
                 if isRandom:
                     newPydle = Pydle(False)
-                    newPydle.startGame(False)
+                    newPydle.startGame()
                     return True
                 else:
                     print("Already daily wordle!")
@@ -107,12 +107,16 @@ class Pydle:
                 print("Unknown command!")
 
     def checkEndGame(self):
-        recentWord = "".join([tile.getLetter() for tile in self.board[-1]])
+        recentWord = len(self.board) > 0 and "".join(
+            [tile.getLetter() for tile in self.board[-1]]
+        )
         if (
             len(self.board) == 6
             or len(self.board) > 0
             and recentWord == self.currentWord
         ):
+            if not didDaily and not self.isRandom:
+                didDaily = True
             self.printBoard()
             print(
                 f"You {"won" if recentWord == self.currentWord else "lost"}! The word was {self.currentWord}"
@@ -182,14 +186,18 @@ class Pydle:
             )
 
 
+didDaily = False
+
+
 def main():
     while True:
+
         pydle = Pydle(False)
         pydle.startGame()
         response = input("Play again? [Y/N] ").lower()
         if response == "y" or "yes" in response:
             # continue playing (random)
-            pydle = Pydle(True)
+            pydle = Pydle(didDaily)
             pydle.startGame()
         if response == "n" or "no" in response:
             break

@@ -192,16 +192,16 @@ didDaily = False
 
 
 def main():
+    pydle = Pydle(False)
+    pydle.startGame()
     while True:
-
-        pydle = Pydle(False)
-        pydle.startGame()
         response = input("Play again? [Y/N] ").lower()
-        if response == "y" or "yes" in response:
+        if "y" in response or "yes" in response:
             # continue playing (random)
             pydle = Pydle(didDaily)
             pydle.startGame()
-        if response == "n" or "no" in response:
+            continue
+        elif "n" in response or "no" in response:
             break
         else:
             print("Unknown input.")

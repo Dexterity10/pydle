@@ -91,13 +91,15 @@ class Pydle:
                 self.printKeyboard()
             case "random":
                 if not isRandom:
-                    self.startGame(True)
+                    newPydle = Pydle(True)
+                    newPydle.startGame()
                     return True
                 else:
                     print("Already random wordle!")
             case "daily":
                 if isRandom:
-                    self.startGame(False)
+                    newPydle = Pydle(False)
+                    newPydle.startGame(False)
                     return True
                 else:
                     print("Already daily wordle!")

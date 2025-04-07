@@ -167,17 +167,10 @@ class Pydle:
 
     def printShareable(self, wordList, isAscii=True):
         fullPrint = f"Daily Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
+        colorToLetter = {Colors.GREEN: "+", Colors.YELLOW: "-", Colors.BLACK: "X"}
         for word in wordList:
             for letter in word:
-                fullPrint += f"{letter.getColor()}["
-                match (letter.getColor()):
-                    case Colors.GREEN:
-                        fullPrint += "+"
-                    case Colors.YELLOW:
-                        fullPrint += "-"
-                    case Colors.BLACK:
-                        fullPrint += "X"
-                fullPrint += "]"
+                fullPrint += f"{letter.getColor()}[{colorToLetter[letter.getColor()]}]"
             fullPrint += f"{Colors.END}\n"
         return fullPrint
 

@@ -124,10 +124,8 @@ class Pydle:
             )
             print(f"\nShare your results!\n{self.printShareable(self.board)}")
             response = input("Copy to Clipboard? [Y/N] ").lower()
-            if "y" in response:
-                pyperclip.copy(
-                    f"```ansi\nDaily Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n{self.printShareable(self.board)}\n```"
-                )
+            if "y" in response and not "n" in response:
+                pyperclip.copy(f"```ansi\n{self.printShareable(self.board)}```")
                 print("Copied!")
             return True
         return False
@@ -167,19 +165,24 @@ class Pydle:
                 self.letters[tile.getLetter()] = Colors.YELLOW
         tile.setColor(colorEnum)
 
-    def printShareable(self, wordList):
-        fullPrint = Colors.END
+    def printShareable(self, wordList, isAscii=True):
+        fullPrint = f"Daily Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
         for word in wordList:
             for letter in word:
-                # print(letter, end="")
-                fullPrint += f"{letter.getColor()}[*]"
+                fullPrint += f"{letter.getColor()}["
+                match (letter.getColor()):
+                    case Colors.GREEN:
+                        fullPrint += "+"
+                    case Colors.YELLOW:
+                        fullPrint += "-"
+                    case Colors.BLACK:
+                        fullPrint += "X"
+                fullPrint += "]"
             fullPrint += f"{Colors.END}\n"
         return fullPrint
 
     def printKeyboard(self):
         for letter, color in self.letters.items():
-            # space_before = " " if letter in "az" else ""
-            # z_space_before = " " if letter in "z" else ""
             end_char = "\n" if letter in "plm" else " "
             print(
                 f"{color}{letter.upper()}{Colors.END}",

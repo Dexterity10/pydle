@@ -122,10 +122,10 @@ class Pydle:
             print(
                 f"You {"won" if recentWord == self.currentWord else "lost"}! The word was {self.currentWord}"
             )
-            print(f"\nShare your results!\n{self.printShareable(self.board)}")
+            print(f"\nShare your results!\n{self.printShareable()}")
             response = input("Copy to Clipboard? [Y/N] ").lower()
             if "y" in response and not "n" in response:
-                pyperclip.copy(f"```ansi\n{self.printShareable(self.board)}```")
+                pyperclip.copy(f"```ansi\n{self.printShareable()}```")
                 print("Copied!")
             return True
         return False
@@ -165,7 +165,8 @@ class Pydle:
                 self.letters[tile.getLetter()] = Colors.YELLOW
         tile.setColor(colorEnum)
 
-    def printShareable(self, wordList, isAscii=True):
+    def printShareable(self):
+        wordList = self.board
         fullPrint = f"Daily Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
         colorToLetter = {Colors.GREEN: "+", Colors.YELLOW: "-", Colors.BLACK: "X"}
         for word in wordList:

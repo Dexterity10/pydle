@@ -177,9 +177,9 @@ class Pydle:
 
     def printKeyboard(self):
         for letter, color in self.letters.items():
-            end_char = "\n" if letter in "plm" else " "
+            end_char = "\n " if letter in "plm" else " "
             print(
-                f"{color}{letter.upper()}{Colors.END}",
+                f"{" " if letter in "z" else ""}{color}{letter.upper()}{Colors.END}",
                 end=end_char,
             )
 

@@ -8,7 +8,7 @@ class Tile:
         self.letter = letter
         self.col = col
         self.index = index
-        self.color = Colors.CYAN
+        self.color = color
 
     def getLetter(self):
         return self.letter

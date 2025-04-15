@@ -2,6 +2,7 @@ import random, pyperclip
 from datetime import datetime
 from tiles import Tile
 from colors import Colors
+from collections import Counter
 
 
 class Pydle:
@@ -17,7 +18,7 @@ class Pydle:
         self.isRandom = isRandom
         self.currentWord = ""
         self.wordIndex = 0
-        self.checkedLetters = set()
+        self.wordDict = dict()
         self.letters = {letter: Colors.END for letter in "qwertyuiopasdfghjklzxcvbnm"}
         self.endGame = False
         self.board = []
@@ -132,9 +133,8 @@ class Pydle:
 
     def printBoard(self):
         for row in self.board:
-            self.checkedLetters = set()
+            self.setRowColor(row)
             for tile in row:
-                self.setTileColor(tile)
                 print(f"{tile.getColor()}[{tile.getLetter()}]{Colors.END}", end="")
             print("")
         if len(self.board) > 0 and self.board[-1] == self.currentWord:
@@ -144,25 +144,37 @@ class Pydle:
                 print(Colors.END, "[ ][ ][ ][ ][ ]", sep="")
         self.printKeyboard()
 
-    def setTileColor(self, tile):
-        colorEnum = Colors.BLACK
-        self.letters[tile.getLetter()] = Colors.BLACK
-
-        letter = tile.getLetter()
-        letterCount = self.currentWord.count(letter)
-        guessLetterCount = sum(
-            1 for t in self.board[tile.getRow()] if t.getLetter() == letter
-        )
-
-        if letter in self.currentWord:
-            colorEnum = Colors.YELLOW
-            self.letters[tile.getLetter()] = Colors.YELLOW
-            if self.currentWord[tile.getIndex()] == letter:
-                colorEnum = Colors.GREEN
-                self.letters[tile.getLetter()] = Colors.GREEN
-            elif guessLetterCount > letterCount:
+    def setRowColor(self, row):
+        self.wordDict = {k: self.currentWord.count(k) for k in set(self.currentWord)}
+        print(self.wordDict)
+        for letter, index in zip(self.wordDict, range(len(self.wordDict))):
+            tile = row[index]
+            colorEnum = Colors.BLACK
+            try:
+                if self.currentWord.index(tile.getLetter()) == index:
+                    colorEnum = Colors.GREEN
+                    self.wordDict[tile.getLetter()] -= 1
+                    # print(self.wordDict)
+                print(tile.getLetter(), self.currentWord.index(tile.getLetter()))
+            except ValueError as e:
+                pass
+        for letter, index in zip(self.wordDict, range(len(self.wordDict))):
+            tile = row[index]
+            try:
+                print(tile.getLetter(), self.wordDict[tile.getLetter()])
+            except KeyError as e:
+                pass
+            if (
+                tile.getLetter() in self.currentWord
+                and self.wordDict[tile.getLetter()] > 0
+            ):
+                try:
+                    print(tile.getLetter(), self.wordDict[tile.getLetter()])
+                except KeyError as e:
+                    pass
                 colorEnum = Colors.YELLOW
-                self.letters[tile.getLetter()] = Colors.YELLOW
+                self.wordDict[tile.getLetter()] -= 1
+                # print(self.wordDict)
         tile.setColor(colorEnum)
 
     def printShareable(self):

@@ -106,7 +106,7 @@ class Pydle:
                     print("Already daily wordle!")
             case "philmode":
                 self.currentWord = "burnt"
-                # literally playable
+                # Now working
             case _:
                 print("Unknown command!")
 

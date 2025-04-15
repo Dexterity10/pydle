@@ -147,35 +147,26 @@ class Pydle:
     def setRowColor(self, row):
         self.wordDict = {k: self.currentWord.count(k) for k in set(self.currentWord)}
         print(self.wordDict)
+        colorEnum = Colors.BLACK
         for letter, index in zip(self.wordDict, range(len(self.wordDict))):
             tile = row[index]
-            colorEnum = Colors.BLACK
             try:
                 if self.currentWord.index(tile.getLetter()) == index:
                     colorEnum = Colors.GREEN
                     self.wordDict[tile.getLetter()] -= 1
-                    # print(self.wordDict)
-                print(tile.getLetter(), self.currentWord.index(tile.getLetter()))
+                    tile.setColor(colorEnum)
             except ValueError as e:
                 pass
         for letter, index in zip(self.wordDict, range(len(self.wordDict))):
             tile = row[index]
-            try:
-                print(tile.getLetter(), self.wordDict[tile.getLetter()])
-            except KeyError as e:
-                pass
             if (
                 tile.getLetter() in self.currentWord
                 and self.wordDict[tile.getLetter()] > 0
             ):
-                try:
-                    print(tile.getLetter(), self.wordDict[tile.getLetter()])
-                except KeyError as e:
-                    pass
+
                 colorEnum = Colors.YELLOW
                 self.wordDict[tile.getLetter()] -= 1
-                # print(self.wordDict)
-        tile.setColor(colorEnum)
+                tile.setColor(colorEnum)
 
     def printShareable(self):
         wordList = self.board

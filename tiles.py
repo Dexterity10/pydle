@@ -2,19 +2,19 @@ from colors import Colors
 
 
 class Tile:
-    __slots__ = ("letter", "row", "index", "color")
+    __slots__ = ("letter", "col", "index", "color")
 
-    def __init__(self, letter, row, index, color="\033[0;30m"):
+    def __init__(self, letter, col, index, color="\033[0;30m"):
         self.letter = letter
-        self.row = row
+        self.col = col
         self.index = index
         self.color = Colors.CYAN
 
     def getLetter(self):
         return self.letter
 
-    def getRow(self):
-        return self.row
+    def getCol(self):
+        return self.col
 
     def getIndex(self):
         return self.index

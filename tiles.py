@@ -6,7 +6,7 @@ class Tile:
 
     def __init__(self, letter, col, index, color="\033[0;30m"):
         self.letter = letter
-        self.col = col
+        self.col = col  # col for index inside row
         self.index = index
         self.color = color
 

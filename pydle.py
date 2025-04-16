@@ -13,6 +13,7 @@ class Pydle:
     ]
     wordleFile = "data/wordles.txt"
     allowed_guesses = set(line.strip() for line in open("data/all_allowed_guesses.txt"))
+    gameType = 0  # 0 is daily, 1 is random, 2 is easter egg/debug
 
     def __init__(self, isRandom=False):
         self.isRandom = isRandom
@@ -82,14 +83,11 @@ class Pydle:
             case "help":
                 print(
                     f"""/quit | close game\
-                                        \n/letters | view all letters and what color you've achieved on them\
-                                        \n/random | pick a random word for Wordle\
-                                        \n/daily | pick the daily word for Wordle"""
+                        \n/random | pick a random word for Wordle\
+                        \n/daily | pick the daily word for Wordle"""
                 )
             case "quit":
                 return True
-            case "letters":
-                self.printKeyboard()
             case "random":
                 if not isRandom:
                     newPydle = Pydle(True)
@@ -107,6 +105,7 @@ class Pydle:
             case "philmode":
                 self.currentWord = "burnt"
                 # Now working
+                self.gameType = 2
             case _:
                 print("Unknown command!")
 
@@ -149,7 +148,6 @@ class Pydle:
 
     def setRowColor(self, row):
         self.wordDict = {k: self.currentWord.count(k) for k in set(self.currentWord)}
-        print(self.wordDict)
         colorEnum = Colors.BLACK
         for letter, index in zip(self.wordDict, range(len(self.wordDict))):
             tile = row[index]
@@ -173,7 +171,8 @@ class Pydle:
 
     def printShareable(self):
         wordList = self.board
-        fullPrint = f"Daily Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
+        gameType = ["Daily", "Random", "Egg'd"]
+        fullPrint = f"{gameType[self.gameType]} Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
         colorToLetter = {Colors.GREEN: "+", Colors.YELLOW: "-", Colors.BLACK: "X"}
         for word in wordList:
             for letter in word:

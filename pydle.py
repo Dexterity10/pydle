@@ -172,7 +172,8 @@ class Pydle:
                 self.letters[letter] = Colors.YELLOW
             else:
                 tile.setColor(Colors.BLACK)
-                self.letters[letter] = Colors.BLACK
+                if self.letters[letter] == Colors.END:
+                    self.letters[letter] = Colors.BLACK
 
     def print_keyboard(self):
         for letter, color in self.letters.items():

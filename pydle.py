@@ -152,8 +152,10 @@ class Pydle:
                 if self.currentWord.index(tile.getLetter(), index) == index:
                     self.wordDict[tile.getLetter()] -= 1
                     tile.setColor(Colors.GREEN)
+                    self.letters[tile.getLetter()] = Colors.GREEN
             except ValueError as e:
                 tile.setColor(Colors.BLACK)
+                self.letters[tile.getLetter()] = Colors.BLACK
         for index in range(5):
             tile = row[index]
             if (
@@ -163,6 +165,7 @@ class Pydle:
             ):
                 self.wordDict[tile.getLetter()] -= 1
                 tile.setColor(Colors.YELLOW)
+                self.letters[tile.getLetter()] = Colors.YELLOW
 
     def printShareable(self):
         wordList = self.board

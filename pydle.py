@@ -13,39 +13,35 @@ class Pydle:
     ]
     wordleFile = "data/wordles.txt"
     allowed_guesses = set(line.strip() for line in open("data/all_allowed_guesses.txt"))
-    gameType = 0  # 0 is daily, 1 is random, 2 is easter egg/debug
+    gameType = 0  # 0 is daily, 1 is random, -1 is easter egg/debug
 
-    def __init__(self, isRandom=False):
-        self.isRandom = isRandom
+    def __init__(self):
         self.currentWord = ""
-        self.wordIndex = 0
         self.wordDict = dict()
         self.letters = {letter: Colors.END for letter in "qwertyuiopasdfghjklzxcvbnm"}
         self.endGame = False
         self.board = []
 
     def startGame(self):
-        # setWordIndex
-        if not self.isRandom:
+        # set random seed
+        if self.gameType == 0:
             print(f"Daily Pydle {(datetime.now() - datetime(2025, 4, 2)).days}")
             timeHash = datetime.now().strftime("%Y%m%d")
             random.seed(timeHash)
         else:
             print("Random Pydle")
             random.seed()
-        # debug values; returns inbox
-        # debugHash = "19700101"
-        # random.seed(debugHash)
 
-        self.wordIndex = random.randint(0, sum(1 for _ in open(self.wordleFile)))
         with open(self.wordleFile) as file:
+            wordIndex = random.randint(0, sum(1 for _ in open(self.wordleFile)))
+            # pick word index
             i = 0
             for line in file:
-                if i < self.wordIndex:
+                if i < wordIndex:
                     i += 1
                     continue
-                if i == self.wordIndex:
-                    word = line.strip()
+                if i == wordIndex:
+                    word = line.strip()  # find word
                     break
             self.currentWord = word
 
@@ -59,7 +55,7 @@ class Pydle:
 
             # commands
             if user_input.startswith("/"):
-                self.endGame = self.handleCommand(user_input[1:], self.isRandom)
+                self.endGame = self.handleCommand(user_input[1:])
                 continue
             else:
                 # guess
@@ -78,8 +74,9 @@ class Pydle:
             if not self.endGame:
                 self.endGame = self.checkEndGame()
 
-    def handleCommand(self, command, isRandom):
-        match command:
+    def handleCommand(self, command):
+        command = command.split(" ")
+        match command[0]:
             case "help":
                 print(
                     f"""/quit | close game\
@@ -89,14 +86,14 @@ class Pydle:
             case "quit":
                 return True
             case "random":
-                if not isRandom:
+                if self.gameType != 1:
                     newPydle = Pydle(True)
                     newPydle.startGame()
                     return True
                 else:
                     print("Already random wordle!")
             case "daily":
-                if isRandom:
+                if self.gameType != 0:
                     newPydle = Pydle(False)
                     newPydle.startGame()
                     return True
@@ -104,8 +101,12 @@ class Pydle:
                     print("Already daily wordle!")
             case "philmode":
                 self.currentWord = "burnt"
-                # Now working
-                self.gameType = 2
+                # Literally Playable
+                self.gameType = -1
+            case "set":
+                self.currentWord = command[1]
+                self.gameType = -1
+                print("set word to", self.currentWord)
             case _:
                 print("Unknown command!")
 
@@ -118,9 +119,6 @@ class Pydle:
             or len(self.board) > 0
             and recentWord == self.currentWord
         ):
-            global didDaily
-            if not didDaily and not self.isRandom:
-                didDaily = True
             self.printBoard()
             print(
                 f"You {"won" if recentWord == self.currentWord else "lost"}! The word was {self.currentWord}"
@@ -148,31 +146,28 @@ class Pydle:
 
     def setRowColor(self, row):
         self.wordDict = {k: self.currentWord.count(k) for k in set(self.currentWord)}
-        colorEnum = Colors.BLACK
-        for letter, index in zip(self.wordDict, range(len(self.wordDict))):
+        for index in range(5):
             tile = row[index]
             try:
-                if self.currentWord.index(tile.getLetter()) == index:
-                    colorEnum = Colors.GREEN
+                if self.currentWord.index(tile.getLetter(), index) == index:
                     self.wordDict[tile.getLetter()] -= 1
-                    tile.setColor(colorEnum)
+                    tile.setColor(Colors.GREEN)
             except ValueError as e:
-                pass
-        for letter, index in zip(self.wordDict, range(len(self.wordDict))):
+                tile.setColor(Colors.BLACK)
+        for index in range(5):
             tile = row[index]
             if (
                 tile.getLetter() in self.currentWord
                 and self.wordDict[tile.getLetter()] > 0
+                and tile.getColor() != Colors.GREEN
             ):
-
-                colorEnum = Colors.YELLOW
                 self.wordDict[tile.getLetter()] -= 1
-                tile.setColor(colorEnum)
+                tile.setColor(Colors.YELLOW)
 
     def printShareable(self):
         wordList = self.board
-        gameType = ["Daily", "Random", "Egg'd"]
-        fullPrint = f"{gameType[self.gameType]} Pydle {(datetime.now() - datetime(2025, 4, 2)).days} {len(self.board)}/6\n"
+        gameType = ["Daily", "Random", "Easter Egg'd"]
+        fullPrint = f"{gameType[self.gameType]} Pydle{" " + str((datetime.now() - datetime(2025, 4, 2)).days) + " " if self.gameType==0 else " "}{len(self.board)}/6\n"
         colorToLetter = {Colors.GREEN: "+", Colors.YELLOW: "-", Colors.BLACK: "X"}
         for word in wordList:
             for letter in word:
@@ -189,18 +184,16 @@ class Pydle:
             )
 
 
-global didDaily
-didDaily = False
-
-
 def main():
-    pydle = Pydle(False)
+    pydle = Pydle()
+    # start daily by default
     pydle.startGame()
     while True:
         response = input("Play again? [Y/N] ").lower()
         if "y" in response or "yes" in response:
             # continue playing (random)
-            pydle = Pydle(didDaily)
+            pydle = Pydle()
+            pydle.gameType = 1  # replay sends them to random game instead of daily
             pydle.startGame()
             continue
         elif "n" in response or "no" in response:

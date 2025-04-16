@@ -155,7 +155,6 @@ class Pydle:
 
     def set_row_color(self, row):
         word_dict = Counter(self.current_word)
-
         # check green
         for i, tile in enumerate(row):
             if tile.getLetter() == self.current_word[i]:
@@ -171,6 +170,9 @@ class Pydle:
                 word_dict[letter] -= 1
                 tile.setColor(Colors.YELLOW)
                 self.letters[letter] = Colors.YELLOW
+            else:
+                tile.setColor(Colors.BLACK)
+                self.letters[letter] = Colors.BLACK
 
     def print_keyboard(self):
         for letter, color in self.letters.items():

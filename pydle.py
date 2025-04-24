@@ -20,7 +20,7 @@ class Pydle:
         # 0 is daily, 1 is random, -1 is easter egg/debug
         self.game_type = 1 if is_random else 0
         self.current_word = ""
-        self.letters = {letter: Colors.END for letter in "qwertyuiopasdfghjklzxcvbnm"}
+        self.letters = {letter: Colors.BOLD for letter in "qwertyuiopasdfghjklzxcvbnm"}
         self.board = []
         self.end_game = False
 
@@ -169,11 +169,11 @@ class Pydle:
             if letter in self.current_word and word_dict[letter] > 0:
                 word_dict[letter] -= 1
                 tile.setColor(Colors.YELLOW)
-                self.letters[letter] = Colors.YELLOW
+                self.letters[letter] = Colors.END + Colors.YELLOW
             else:
                 tile.setColor(Colors.BLACK)
-                if self.letters[letter] == Colors.END:
-                    self.letters[letter] = Colors.BLACK
+                if self.letters[letter] == Colors.BOLD:
+                    self.letters[letter] = Colors.END + Colors.BLACK
 
     def print_keyboard(self):
         for letter, color in self.letters.items():
@@ -185,10 +185,13 @@ class Pydle:
 
     def printShareable(self):
         type_list = ["Daily", "Random", "Easter Egg'd"]
+        guess = "".join(tile.getLetter() for tile in self.board[-1])
+        is_correct = guess == self.current_word
+        outOf = f"{len(self.board) if is_correct else "X"}"
         day_str = (
             f" {((datetime.now()-START_DATE).days)}" if self.game_type == 0 else ""
         )
-        full_print = f"{type_list[self.game_type]} Pydle{day_str} {len(self.board)}/6\n"
+        full_print = f"{type_list[self.game_type]} Pydle{day_str} {outOf}/6\n"
         color_map = {Colors.GREEN: "+", Colors.YELLOW: "-", Colors.BLACK: "X"}
         for row in self.board:
             full_print += "".join(

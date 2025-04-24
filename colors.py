@@ -25,4 +25,4 @@ class Colors(StrEnum):
     BLINK = "\033[5m"
     NEGATIVE = "\033[7m"
     CROSSED = "\033[9m"
-    END = "\033[0m"
+    END = "\033[0;0;0m"

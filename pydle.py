@@ -4,8 +4,8 @@ from tiles import Tile
 from colors import Colors
 from collections import Counter
 
-WORDLE_FILE = "data/wordles.txt"
-ALLOWED_GUESSES = set(line.strip() for line in open("data/all_allowed_guesses.txt"))
+WORDLE_FILE = "Data/wordles.txt"
+ALLOWED_GUESSES = set(line.strip() for line in open("Data/all_allowed_guesses.txt"))
 START_DATE = datetime(2025, 4, 2)
 
 
